@@ -11,8 +11,8 @@ import ru.otus.hw.service.generator.QuestionGenerator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class TestServiceImplTest {
 
@@ -27,17 +27,15 @@ class TestServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		outputString = new StringBuilder();
-		ioService = new IOService() {
-			@Override
-			public void printLine(String s) {
-				outputString.append(s);
-			}
-
-			@Override
-			public void printFormattedLine(String s, Object... args) {
-				outputString.append(String.format(s, args));
-			}
-		};
+		ioService = mock(IOService.class);
+		doAnswer(invocationOnMock -> {
+			outputString.append((String) invocationOnMock.getArgument(0));
+			return null;
+		}).when(ioService).printLine(anyString());
+		doAnswer(invocationOnMock -> {
+			outputString.append(String.format((String) invocationOnMock.getArgument(0), invocationOnMock.getArgument(1), invocationOnMock.getArgument(2)));
+			return null;
+		}).when(ioService).printFormattedLine(anyString(), any(), any());
 		questionDao = mock(QuestionDao.class);
 		testService = new TestServiceImpl(ioService, questionDao);
 	}

@@ -1,9 +1,7 @@
 package ru.otus.hw.service.generator;
 
-import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionGenerator {
@@ -36,11 +34,9 @@ public class QuestionGenerator {
 	}
 
 	public static Question emptyAnswersQuestion() {
-		ArrayList<Answer> answers = new ArrayList<>();
-		answers.add(null);
 		return Question.builder()
 				.text("question 1")
-				.answers(answers)
+				.answers(List.of())
 				.build();
 	}
 }

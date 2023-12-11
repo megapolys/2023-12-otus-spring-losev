@@ -17,9 +17,6 @@ public class TestServiceImpl implements TestService {
         for (Question question : questionDao.findAll()) {
             ioService.printLine(question.text());
             for (int i = 0; i < question.answers().size(); i++) {
-                if (question.answers().get(i) == null) {
-                    continue;
-                }
                 ioService.printFormattedLine("#%d %s", i + 1, question.answers().get(i).text());
             }
             ioService.printLine("");
