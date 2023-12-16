@@ -51,13 +51,4 @@ class TestServiceImplTest {
 		String out = outputString.toString();
 		assertThat(out).contains(List.of(questions.get(0).text(), questions.get(0).answers().get(0).text()));
 	}
-
-	@Test
-	@DisplayName("должен корректно выводить вопросы без ответов")
-	void printQuestionsWithNoAnswers() {
-		List<Question> questions = QuestionGenerator.nullAnswers();
-		when(questionDao.findAll()).thenReturn(questions);
-
-		testService.executeTest();
-	}
 }

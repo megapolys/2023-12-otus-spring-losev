@@ -37,11 +37,6 @@ public class CsvQuestionDao implements QuestionDao {
 		} catch (Exception e) {
 			throw new QuestionReadException(e.getMessage(), e);
 		}
-		return questions.stream()
-				.map(QuestionDto::toDomainObject)
-				.map(question -> new Question(question.text(), question.answers().stream()
-						.filter(Objects::nonNull)
-						.toList()))
-				.toList();
+		return questions.stream().map(QuestionDto::toDomainObject).toList();
 	}
 }

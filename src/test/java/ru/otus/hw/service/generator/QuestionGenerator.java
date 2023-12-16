@@ -13,12 +13,6 @@ public class QuestionGenerator {
 		);
 	}
 
-	public static List<Question> nullAnswers() {
-		return List.of(
-				emptyAnswersQuestion()
-		);
-	}
-
 	public static Question valid() {
 		return Question.builder()
 				.text("question 1")
@@ -30,13 +24,6 @@ public class QuestionGenerator {
 		return Question.builder()
 				.text("")
 				.answers(AnswerGenerator.all())
-				.build();
-	}
-
-	public static Question emptyAnswersQuestion() {
-		return Question.builder()
-				.text("question 1")
-				.answers(List.of())
 				.build();
 	}
 }
