@@ -6,31 +6,31 @@ import java.util.List;
 
 public class QuestionGenerator {
 
-	public static List<Question> all() {
+	public static List<Question> listOfValidAndEmptyQuestions() {
 		return List.of(
-				valid("question 1"),
-				emptyText()
+			validQuestion("question 1"),
+			emptyQuestion()
 		);
 	}
 
-	public static List<Question> findAll() {
+	public static List<Question> listOfValidQuestions() {
 		return List.of(
-			valid("question 1"),
-			valid("question 2")
+			validQuestion("question 1"),
+			validQuestion("question 2")
 		);
 	}
 
-	public static Question valid(String text) {
+	public static Question validQuestion(String text) {
 		return Question.builder()
-				.text(text)
-				.answers(AnswerGenerator.all())
-				.build();
+			.text(text)
+			.answers(AnswerGenerator.all())
+			.build();
 	}
 
-	public static Question emptyText() {
+	public static Question emptyQuestion() {
 		return Question.builder()
-				.text("")
-				.answers(AnswerGenerator.all())
-				.build();
+			.text("")
+			.answers(AnswerGenerator.all())
+			.build();
 	}
 }

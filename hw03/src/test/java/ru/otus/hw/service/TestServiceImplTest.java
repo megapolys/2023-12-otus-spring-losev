@@ -52,7 +52,7 @@ class TestServiceImplTest {
 	@Test
 	@DisplayName("должен корректно выводить вопросы")
 	void printQuestionsWithAnswers() {
-		List<Question> questions = QuestionGenerator.all();
+		List<Question> questions = QuestionGenerator.listOfValidAndEmptyQuestions();
 		Student student = new Student("Иван", "Иванов");
 
 		when(questionDao.findAll()).thenReturn(questions);

@@ -34,7 +34,7 @@ public class CsvQuestionDaoTest {
 	@DisplayName("должен корректно читать вопросы из ресурсов")
 	@Test
 	void  findAllFromQuestion() throws Exception {
-		List<Question> questionsExpected = QuestionGenerator.findAll();
+		List<Question> questionsExpected = QuestionGenerator.listOfValidQuestions();
 		when(testFileNameProvider.getTestFileName()).thenReturn("questions.csv");
 
 		List<Question> questionsActual = csvQuestionDao.findAll();
