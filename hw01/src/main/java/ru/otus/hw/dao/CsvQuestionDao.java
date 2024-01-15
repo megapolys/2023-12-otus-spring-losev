@@ -12,7 +12,6 @@ import ru.otus.hw.exceptions.QuestionReadException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 public class CsvQuestionDao implements QuestionDao {
