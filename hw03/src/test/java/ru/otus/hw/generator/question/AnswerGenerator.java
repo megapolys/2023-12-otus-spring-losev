@@ -6,10 +6,10 @@ import java.util.List;
 
 public class AnswerGenerator {
 
-	public static List<Answer> all() {
+	public static List<Answer> listOfAnswers() {
 		return List.of(
-				validTrue(),
-				validFalse()
+			validTrue(),
+			validFalse()
 		);
 	}
 

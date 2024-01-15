@@ -39,13 +39,14 @@ class TestServiceImplTest {
 			return null;
 		}).when(localizedIOService).printLine(anyString());
 		doAnswer(invocationOnMock -> {
-			outputString.append(String.format((String) invocationOnMock.getArgument(0),
-											  invocationOnMock.getArgument(1),
-											  invocationOnMock.getArgument(2)
+			outputString.append(String.format(
+				(String) invocationOnMock.getArgument(0),
+				invocationOnMock.getArgument(1),
+				invocationOnMock.getArgument(2)
 			));
 			return null;
 		}).when(localizedIOService).printFormattedLine(anyString(), any(), any());
-		doAnswer(invocationOnMock -> 1).when(localizedIOService).readIntForRange(anyInt(), anyInt(), anyString());
+		when(localizedIOService.readIntForRange(anyInt(), anyInt(), any())).thenReturn(1);
 		testService = new TestServiceImpl(localizedIOService, questionDao);
 	}
 

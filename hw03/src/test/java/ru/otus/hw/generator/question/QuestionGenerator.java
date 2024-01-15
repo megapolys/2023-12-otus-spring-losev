@@ -23,14 +23,14 @@ public class QuestionGenerator {
 	public static Question validQuestion(String text) {
 		return Question.builder()
 			.text(text)
-			.answers(AnswerGenerator.all())
+			.answers(AnswerGenerator.listOfAnswers())
 			.build();
 	}
 
 	public static Question emptyQuestion() {
 		return Question.builder()
 			.text("")
-			.answers(AnswerGenerator.all())
+			.answers(AnswerGenerator.listOfAnswers())
 			.build();
 	}
 }
