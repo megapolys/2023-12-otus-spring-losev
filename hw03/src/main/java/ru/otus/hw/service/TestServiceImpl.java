@@ -11,6 +11,7 @@ import ru.otus.hw.domain.TestResult;
 public class TestServiceImpl implements TestService {
 
 	private final LocalizedIOService ioService;
+
 	private final QuestionDao questionDao;
 
 	@Override
@@ -27,7 +28,9 @@ public class TestServiceImpl implements TestService {
 			for (int i = 0; i < question.answers().size(); i++) {
 				ioService.printFormattedLine("#%d %s", i + 1, question.answers().get(i).text());
 			}
-			int answer = ioService.readIntForRange(1, question.answers().size(), ioService.getMessage("TestService.illegal.value"));
+			int answer = ioService.readIntForRange(1, question.answers().size(),
+				ioService.getMessage("TestService.illegal.value")
+			);
 			var isAnswerValid = question.answers().get(answer - 1).isCorrect();
 			testResult.applyAnswer(question, isAnswerValid);
 		}
