@@ -15,9 +15,11 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,22 +31,17 @@ public class JdbcBookRepository implements BookRepository {
 
 	@Override
 	public Optional<Book> findById(long id) {
-		var books = jdbc.query(
-			"select b.id as id, b.title as title, a.id as author_id, a.full_name as author_fullname " +
+		return Optional.ofNullable(jdbc.query(
+			"select b.id as id, b.title as title, a.id as author_id, a.full_name as author_fullname, " +
+				"g.id as genre_id, g.name as genre_name " +
 				"from books as b " +
 				"left join authors as a on b.author_id = a.id " +
+				"left join books_genres as bg on bg.book_id = b.id " +
+				"left join genres as g on bg.genre_id = g.id " +
 				"where b.id = :id",
 			new MapSqlParameterSource("id", id),
-			new BookRowMapper()
-		);
-		if (books.isEmpty()) {
-			return Optional.empty();
-		} else {
-			var genres = genreRepository.findAll();
-			var relations = getAllGenreRelations();
-			mergeBooksInfo(books, genres, relations);
-			return Optional.of(books.get(0));
-		}
+			new BookResultSetExtractor()
+		));
 	}
 
 	@Override
@@ -67,7 +64,6 @@ public class JdbcBookRepository implements BookRepository {
 	@Override
 	public void deleteById(long id) {
 		jdbc.update("delete from books where id = :id", new MapSqlParameterSource("id", id));
-		removeGenresRelationsForBookId(id);
 	}
 
 	private List<Book> getAllBooksWithoutGenres() {
@@ -88,14 +84,18 @@ public class JdbcBookRepository implements BookRepository {
 		List<Genre> genres,
 		List<BookGenreRelation> relations
 	) {
+		Map<Long, Genre> genresByGenreId = genres.stream()
+			.collect(Collectors.toMap(Genre::getId, g -> g));
+		Map<Long, List<BookGenreRelation>> relationsByBookId = relations.stream()
+			.collect(Collectors.groupingBy(BookGenreRelation::bookId));
 		for (Book book : booksWithoutGenres) {
-			book.setGenres(relations.stream()
-				.filter(relation -> relation.bookId == book.getId())
-				.map(relation -> genres.stream()
-					.filter(genre -> relation.genreId == genre.getId())
-					.findFirst()
-					.orElseThrow(() -> new EntityNotFoundException("Genre entity not found")))
-				.toList());
+			List<Genre> genresByBook = relationsByBookId.get(book.getId()).stream()
+				.map(r -> genresByGenreId.get(r.genreId))
+				.toList();
+			if (genresByBook.isEmpty()) {
+				throw new EntityNotFoundException("Genre entity not found");
+			}
+			book.setGenres(genresByBook);
 		}
 	}
 
@@ -186,7 +186,25 @@ public class JdbcBookRepository implements BookRepository {
 
 		@Override
 		public Book extractData(ResultSet rs) throws SQLException, DataAccessException {
-			return null;
+			Book book = null;
+			while (rs.next()) {
+				if (book == null) {
+					book = Book.builder()
+						.id(rs.getLong("id"))
+						.title(rs.getString("title"))
+						.author(Author.builder()
+							.id(rs.getLong("author_id"))
+							.fullName(rs.getString("author_fullname"))
+							.build())
+						.genres(new ArrayList<>())
+						.build();
+				}
+				book.getGenres().add(Genre.builder()
+					.id(rs.getLong("genre_id"))
+					.name(rs.getString("genre_name"))
+					.build());
+			}
+			return book;
 		}
 	}
 
