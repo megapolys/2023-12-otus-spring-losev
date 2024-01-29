@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.config.TestConfig;
 import ru.otus.hw.domain.TestResult;
-import ru.otus.hw.repositories.TestResultRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -14,11 +13,8 @@ public class ResultServiceImpl implements ResultService {
 
 	private final LocalizedIOService ioService;
 
-	private final TestResultRepository testResultRepository;
-
 	@Override
-	public void showResult() {
-		TestResult testResult = testResultRepository.getTestResult(ioService.getMessage("TestResult.not.found"));
+	public void showResult(TestResult testResult) {
 		ioService.printLine("");
 		ioService.printLineLocalized("ResultService.test.results");
 		ioService.printFormattedLineLocalized(

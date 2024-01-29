@@ -10,7 +10,6 @@ import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.domain.Student;
 import ru.otus.hw.generator.question.QuestionGenerator;
-import ru.otus.hw.repositories.StudentRepository;
 
 import java.util.List;
 
@@ -29,9 +28,6 @@ class TestServiceImplTest {
 
 	@Autowired
 	private TestService testService;
-
-	@MockBean
-	private StudentRepository studentRepository;
 
 	private StringBuilder outputString;
 
@@ -60,9 +56,8 @@ class TestServiceImplTest {
 		Student student = new Student("Иван", "Иванов");
 
 		when(questionDao.findAll()).thenReturn(questions);
-		when(studentRepository.getStudent(anyString())).thenReturn(student);
 
-		testService.executeTestFor();
+		testService.executeTestFor(student);
 
 		String out = outputString.toString();
 		assertThat(out).contains(List.of(questions.get(0).text(), questions.get(0).answers().get(0).text()));
