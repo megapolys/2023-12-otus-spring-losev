@@ -4,8 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
@@ -15,12 +14,11 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jdbc для работы с жанрами ")
-@JdbcTest
-@Import({JdbcGenreRepository.class})
+@SpringBootTest
 public class JdbcGenreRepositoryTest {
 
 	@Autowired
-	JdbcGenreRepository genreRepository;
+	JpaGenreRepository genreRepository;
 
 	private List<Genre> dbGenres;
 

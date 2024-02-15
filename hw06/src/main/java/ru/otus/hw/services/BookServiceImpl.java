@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -25,7 +26,11 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Optional<Book> findById(long id) {
-		return bookRepository.findById(id);
+		try {
+			return Optional.of(bookRepository.findById(id));
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
 	}
 
 	@Override
