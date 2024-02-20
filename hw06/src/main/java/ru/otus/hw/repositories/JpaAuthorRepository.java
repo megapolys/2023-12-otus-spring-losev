@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Author;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,9 +23,9 @@ public class JpaAuthorRepository implements AuthorRepository {
 	}
 
 	@Override
-	public Optional<Author> findById(long id) {
+	public Author findById(long id) {
 		TypedQuery<Author> query = em.createQuery("select a from Author a where a.id = :id", Author.class);
 		query.setParameter("id", id);
-		return Optional.ofNullable(query.getSingleResult());
+		return query.getSingleResult();
 	}
 }

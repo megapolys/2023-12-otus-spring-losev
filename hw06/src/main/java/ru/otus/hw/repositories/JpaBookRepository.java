@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.models.Book;
 
 import java.util.List;
@@ -39,7 +38,6 @@ public class JpaBookRepository implements BookRepository {
 	}
 
 	@Override
-	@Transactional
 	public Book save(Book book) {
 		if (book.getId() == 0) {
 			em.persist(book);

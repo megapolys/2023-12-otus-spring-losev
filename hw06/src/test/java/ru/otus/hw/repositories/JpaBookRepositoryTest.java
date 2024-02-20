@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Репозиторий на основе Jpa для работы с книгами ")
 @DataJpaTest
 @Import({JpaBookRepository.class, JpaGenreRepository.class})
-class JdbcBookRepositoryTest {
+class JpaBookRepositoryTest {
 
 	@Autowired
 	private JpaBookRepository repositoryJpa;
@@ -72,7 +72,6 @@ class JdbcBookRepositoryTest {
 		var expectedBooks = dbBooks;
 
 		assertThat(actualBooks).containsExactlyElementsOf(expectedBooks);
-		actualBooks.forEach(System.out::println);
 	}
 
 	@DisplayName("должен сохранять новую книгу")
