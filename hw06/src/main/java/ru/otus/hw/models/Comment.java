@@ -1,15 +1,13 @@
 package ru.otus.hw.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -20,7 +18,7 @@ public class Comment {
 	@Column(name = "text")
 	private String text;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "book_id")
 	private Book book;
 }

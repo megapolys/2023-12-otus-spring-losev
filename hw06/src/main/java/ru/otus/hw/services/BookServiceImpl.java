@@ -1,6 +1,5 @@
 package ru.otus.hw.services;
 
-import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +26,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Optional<Book> findById(long id) {
-		try {
-			return Optional.of(bookRepository.findById(id));
-		} catch (NoResultException e) {
-			return Optional.empty();
-		}
+		return bookRepository.findById(id);
 	}
 
 	@Override

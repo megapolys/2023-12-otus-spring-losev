@@ -1,7 +1,5 @@
 package ru.otus.hw.repositories;
 
-import jakarta.persistence.NoResultException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +16,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -55,14 +54,17 @@ class JpaBookRepositoryTest {
 	@MethodSource("getExpectedBooks")
 	void shouldReturnCorrectBookById(Long expectedBookId) {
 		Book expectedBook = em.find(Book.class, expectedBookId);
-		Book actualBook = repositoryJpa.findById(expectedBookId);
-		assertThat(actualBook).isEqualTo(expectedBook);
+		Optional<Book> actualBook = repositoryJpa.findById(expectedBookId);
+		assertThat(actualBook).isPresent()
+			.get()
+			.isEqualTo(expectedBook);
 	}
 
 	@DisplayName("должен вернуть корректное значение, если книга не найдена")
 	@Test
-	void ifBookNotFoundShouldReturnException() {
-		Assertions.assertThatExceptionOfType(NoResultException.class).isThrownBy(() -> repositoryJpa.findById(4));
+	void ifBookNotFoundShouldReturnEmptyOptional() {
+		Optional<Book> actualBook = repositoryJpa.findById(4);
+		assertThat(actualBook).isEmpty();
 	}
 
 	@DisplayName("должен загружать список всех книг")

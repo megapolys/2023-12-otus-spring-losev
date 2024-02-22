@@ -1,16 +1,14 @@
 package ru.otus.hw.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 @Builder
 @Entity
 @Table(name = "books")
@@ -23,7 +21,7 @@ public class Book {
 	@Column(name = "title")
 	private String title;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "author_id")
 	private Author author;
 
