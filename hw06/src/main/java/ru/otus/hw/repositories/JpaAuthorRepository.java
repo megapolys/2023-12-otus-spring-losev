@@ -24,8 +24,6 @@ public class JpaAuthorRepository implements AuthorRepository {
 
 	@Override
 	public Author findById(long id) {
-		TypedQuery<Author> query = em.createQuery("select a from Author a where a.id = :id", Author.class);
-		query.setParameter("id", id);
-		return query.getSingleResult();
+		return em.find(Author.class, id);
 	}
 }
