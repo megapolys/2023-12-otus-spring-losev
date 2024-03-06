@@ -11,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
-import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.entity.Author;
+import ru.otus.hw.models.entity.Book;
+import ru.otus.hw.models.entity.Genre;
 
 import java.util.List;
 import java.util.Optional;

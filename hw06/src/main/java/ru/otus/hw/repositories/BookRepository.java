@@ -1,6 +1,6 @@
 package ru.otus.hw.repositories;
 
-import ru.otus.hw.models.Book;
+import ru.otus.hw.models.entity.Book;
 
 import java.util.List;
 import java.util.Optional;
