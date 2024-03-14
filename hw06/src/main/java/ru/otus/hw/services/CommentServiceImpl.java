@@ -22,14 +22,14 @@ public class CommentServiceImpl implements CommentService {
 	private final BookRepository bookRepository;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Optional<CommentDto> findById(long id) {
 		return Optional.ofNullable(commentRepository.findById(id))
 			.map(CommentDto::new);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CommentDto> findByBookId(long bookId) {
 		return commentRepository.findByBookId(bookId).stream()
 			.map(CommentDto::new)

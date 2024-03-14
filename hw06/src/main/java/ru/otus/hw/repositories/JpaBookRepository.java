@@ -34,7 +34,7 @@ public class JpaBookRepository implements BookRepository {
 	public List<Book> findAll() {
 		EntityGraph<?> entityGraph = em.getEntityGraph("book-author-graph");
 		TypedQuery<Book> query = em.createQuery(
-			"select distinct b from Book b", Book.class
+			"select b from Book b", Book.class
 		);
 		query.setHint(FETCH.getKey(), entityGraph);
 		return query.getResultList();
