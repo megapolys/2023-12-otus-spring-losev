@@ -17,12 +17,11 @@ import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphTyp
 
 @Repository
 @RequiredArgsConstructor
-public class JpaBookRepository implements BookRepository {
+public class JpaBookRepository {
 
 	@PersistenceContext
 	private final EntityManager em;
 
-	@Override
 	public Optional<Book> findById(long id) {
 		EntityGraph<?> entityGraph = em.getEntityGraph("book-author-genres-graph");
 		Map<String, Object> properties = new HashMap<>();
@@ -30,7 +29,6 @@ public class JpaBookRepository implements BookRepository {
 		return Optional.ofNullable(em.find(Book.class, id, properties));
 	}
 
-	@Override
 	public List<Book> findAll() {
 		EntityGraph<?> entityGraph = em.getEntityGraph("book-author-graph");
 		TypedQuery<Book> query = em.createQuery(
@@ -38,22 +36,5 @@ public class JpaBookRepository implements BookRepository {
 		);
 		query.setHint(FETCH.getKey(), entityGraph);
 		return query.getResultList();
-	}
-
-	@Override
-	public Book save(Book book) {
-		if (book.getId() == 0) {
-			em.persist(book);
-			return book;
-		}
-		return em.merge(book);
-	}
-
-	@Override
-	public void deleteById(long id) {
-		Book book = em.find(Book.class, id);
-		if (book != null) {
-			em.remove(book);
-		}
 	}
 }

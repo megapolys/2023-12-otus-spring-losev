@@ -69,8 +69,11 @@ public class BookServiceImpl implements BookService {
 			throw new EntityNotFoundException("One or all genres with ids %s not found"
 				.formatted(genresIds));
 		}
+		if (author.isEmpty()) {
+			throw new EntityNotFoundException("Author with id %s not found".formatted(authorId));
+		}
 
-		Book book = new Book(id, title, author, genres);
+		Book book = new Book(id, title, author.get(), genres);
 		Book saved = bookRepository.save(book);
 		return new BookDto(saved);
 	}

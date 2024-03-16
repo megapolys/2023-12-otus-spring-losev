@@ -1,7 +1,6 @@
 package ru.otus.hw.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<CommentDto> findById(long id) {
-		return Optional.ofNullable(commentRepository.findById(id))
+		return commentRepository.findById(id)
 			.map(CommentDto::new);
 	}
 
@@ -51,12 +50,8 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional
 	public CommentDto update(long id, String text) {
-		Comment comment;
-		try {
-			comment = commentRepository.findById(id);
-		} catch (NoResultException e) {
-			throw new EntityNotFoundException("Comment with id %d not found".formatted(id));
-		}
+		Comment comment = commentRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found".formatted(id)));
 		comment.setText(text);
 		Comment saved = commentRepository.save(comment);
 		return new CommentDto(saved);

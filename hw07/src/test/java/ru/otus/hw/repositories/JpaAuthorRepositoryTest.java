@@ -5,45 +5,50 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import ru.otus.hw.models.entity.Author;
 
-import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jpa для работы с авторами ")
+@DisplayName("Репозиторий для работы с авторами ")
 @DataJpaTest
-@Import({JpaAuthorRepository.class})
 public class JpaAuthorRepositoryTest {
 
 	@Autowired
-	private JpaAuthorRepository repositoryJpa;
+	private AuthorRepository authorRepository;
 
 	@Autowired
 	private TestEntityManager em;
 
-	@DisplayName("должен загружать список всех авторов")
-	@Test
-	void shouldReturnCorrectAuthorsList() {
-		var actualAuthors = repositoryJpa.findAll();
-		var expectedAuthors = getDbAuthors();
-
-		assertThat(actualAuthors).containsExactlyElementsOf(expectedAuthors);
-		actualAuthors.forEach(System.out::println);
-	}
-
-	private List<Author> getDbAuthors() {
-		return IntStream.range(1, 4).mapToObj(i -> em.find(Author.class, i)).toList();
-	}
-
 	@DisplayName("должен загружать автора по идентификатору")
 	@Test
 	void shouldReturnCorrectAuthorById() {
-		var actualAuthor = repositoryJpa.findById(1L);
-		var expectedAuthor = em.find(Author.class, 1L);
+		Author expectedAuthor = new Author(1L, "Author_1");
+		var actualAuthor = authorRepository.findById(1L);
 
-		assertThat(actualAuthor).isEqualTo(expectedAuthor);
+		assertThat(actualAuthor.isPresent()).isTrue();
+		assertThat(actualAuthor.get()).isEqualTo(expectedAuthor);
+	}
+
+	@DisplayName("должен сохранять нового автора")
+	@Test
+	void shouldCorrectSaveAuthor() {
+		Author expected = authorRepository.save(new Author(0, "new_author"));
+
+		Author actual = em.find(Author.class, expected.getId());
+		assertThat(actual).isNotNull();
+		assertThat(actual).isEqualTo(expected);
+	}
+
+	@DisplayName("должен сохранять и получать нового автора")
+	@Test
+	void shouldCorrectSaveAndFindAuthor() {
+		Author expected = authorRepository.save(new Author(0, "new_author"));
+		Optional<Author> actual = authorRepository.findById(expected.getId());
+
+		assertThat(actual.isPresent()).isTrue();
+		assertThat(actual.get()).isEqualTo(expected);
 	}
 }
