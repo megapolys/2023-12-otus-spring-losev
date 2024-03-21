@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.otus.hw.models.entity.Book;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
