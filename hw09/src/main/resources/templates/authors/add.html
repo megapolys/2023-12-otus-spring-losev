@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add new author</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="errors" th:if="${errorMessage}" th:text="${errorMessage}">Error</div>
+
+<form id="edit-form" action="edit.html" th:method="post" th:action="@{/authors/add}" th:object="${author}">
+    <h3>Author Info:</h3>
+
+    <div th:if="${author} != null" class="row">
+        <label for="author-name-input">Full name:</label>
+        <input id="author-name-input" name="fullName" type="text" value="John Doe" th:value="*{fullName}"/>
+        <div class="errors" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Wrong author full name error</div>
+    </div>
+
+    <div th:if="${author} == null" class="row">
+        <label for="author-name-input">Full name:</label>
+        <input id="author-name-input" name="fullName" type="text"/>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <a th:href="@{/authors}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+</body>
+</html>
