@@ -1,25 +1,23 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.models.entity.Book;
+import ru.otus.hw.models.dto.GenreDto;
+import ru.otus.hw.templates.GenreTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class GenreServiceImpl implements GenreService {
-	private final MongoTemplate mongoTemplate;
+	private final GenreTemplate genreTemplate;
 
 	@Override
-	public List<String> findAll() {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("genres").exists(true));
-		List<String> genres = mongoTemplate.findDistinct(query, "genres", Book.class, String.class);
-		genres.sort(String::compareTo);
-		return genres;
+	public List<GenreDto> findAll() {
+		return genreTemplate.findAll().stream()
+			.map(GenreDto::new)
+			.sorted(Comparator.comparing(GenreDto::getName))
+			.toList();
 	}
 }

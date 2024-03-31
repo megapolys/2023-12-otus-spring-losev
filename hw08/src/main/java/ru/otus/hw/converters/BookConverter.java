@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 public class BookConverter {
 	private final AuthorConverter authorConverter;
 
+	private final GenreConverter genreConverter;
+
 	public String bookToString(BookDto book) {
 		var genresString = book.getGenres().stream()
-			.map("{%s}"::formatted)
+			.map(genreConverter::genreToString)
 			.collect(Collectors.joining(", "));
 		return "Id: %s, title: %s, author: {%s}, genres: [%s]".formatted(
 			book.getId(),

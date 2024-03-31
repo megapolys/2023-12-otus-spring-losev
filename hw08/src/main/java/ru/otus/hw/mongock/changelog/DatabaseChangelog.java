@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import ru.otus.hw.models.entity.Author;
 import ru.otus.hw.models.entity.Book;
 import ru.otus.hw.models.entity.Comment;
+import ru.otus.hw.models.entity.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
@@ -36,11 +37,11 @@ public class DatabaseChangelog {
 	@ChangeSet(order = "004", id = "createBooks", author = "dlosev")
 	public void createBooks(BookRepository repository, AuthorRepository authorRepository) {
 		repository.save(new Book("1", "BookTitle_1", authorRepository.findById("1").get(),
-			Set.of("Genre_1", "Genre_2")));
+			Set.of(new Genre("Genre_1"), new Genre("Genre_2"))));
 		repository.save(new Book("2", "BookTitle_2", authorRepository.findById("1").get(),
-			Set.of("Genre_3", "Genre_4")));
+			Set.of(new Genre("Genre_3"), new Genre("Genre_4"))));
 		repository.save(new Book("3", "BookTitle_3", authorRepository.findById("2").get(),
-			Set.of("Genre_5", "Genre_2", "Genre_6")));
+			Set.of(new Genre("Genre_5"), new Genre("Genre_2"), new Genre("Genre_6"))));
 	}
 
 	@ChangeSet(order = "005", id = "createComments", author = "dlosev")

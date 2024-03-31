@@ -4,29 +4,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.otus.hw.models.entity.Author;
-import ru.otus.hw.models.entity.Book;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий для работы с авторами ")
-@SpringBootTest
-@AutoConfigureDataMongo
+@DataMongoTest
 public class AuthorRepositoryTest {
 
 	@Autowired
 	private AuthorRepository authorRepository;
 
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 	@BeforeEach
 	void setup() {
-		authorRepository.deleteAll();
-		authorRepository.save(new Author("1", "Author_1"));
-		authorRepository.save(new Author("2", "Author_2"));
+		mongoTemplate.dropCollection("authors");
+		mongoTemplate.insert(new Author("1", "Author_1"));
+		mongoTemplate.insert(new Author("2", "Author_2"));
 	}
 
 	@DisplayName("должен загружать автора по идентификатору")
@@ -37,6 +37,15 @@ public class AuthorRepositoryTest {
 
 		assertThat(actualAuthor.isPresent()).isTrue();
 		assertThat(actualAuthor.get()).isEqualTo(expectedAuthor);
+	}
+
+	@DisplayName("должен сохранять нового автора")
+	@Test
+	void shouldCorrectSaveAuthor() {
+		Author expected = authorRepository.save(new Author("new_author"));
+		Author actual = mongoTemplate.findById(expected.getId(), Author.class);
+
+		assertThat(actual).isEqualTo(expected);
 	}
 
 	@DisplayName("должен сохранять и получать нового автора")

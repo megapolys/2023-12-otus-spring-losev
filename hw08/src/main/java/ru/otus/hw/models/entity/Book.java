@@ -23,5 +23,5 @@ public class Book {
 	@DocumentReference
 	private Author author;
 
-	private Set<String> genres;
+	private Set<Genre> genres;
 }

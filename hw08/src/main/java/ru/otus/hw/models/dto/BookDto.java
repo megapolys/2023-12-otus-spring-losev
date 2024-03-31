@@ -5,6 +5,7 @@ import lombok.Data;
 import ru.otus.hw.models.entity.Book;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -16,14 +17,14 @@ public class BookDto {
 
 	private AuthorDto author;
 
-	private Set<String> genres;
+	private Set<GenreDto> genres;
 
 	public BookDto(Book book) {
 		this(
 			book.getId(),
 			book.getTitle(),
 			new AuthorDto(book.getAuthor()),
-			book.getGenres()
+			book.getGenres().stream().map(GenreDto::new).collect(Collectors.toSet())
 		);
 	}
 

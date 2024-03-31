@@ -7,9 +7,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import ru.otus.hw.models.entity.Author;
 import ru.otus.hw.models.entity.Book;
+import ru.otus.hw.models.entity.Genre;
 import ru.otus.hw.repositories.generator.BookGenerator;
 
 import java.util.Optional;
@@ -20,25 +22,24 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий для работы с книгами ")
-@SpringBootTest
-@AutoConfigureDataMongo
+@DataMongoTest
 class BookRepositoryTest {
 
 	@Autowired
 	private BookRepository bookRepository;
 
 	@Autowired
-	private AuthorRepository authorRepository;
+	private MongoTemplate mongoTemplate;
 
 	@BeforeEach
 	void setup() {
-		bookRepository.deleteAll();
-		bookRepository.save(new Book("1", "BookTitle_1", authorRepository.findById("1").get(),
-			Set.of("Genre_1", "Genre_2")));
-		bookRepository.save(new Book("2", "BookTitle_2", authorRepository.findById("1").get(),
-			Set.of("Genre_3", "Genre_4")));
-		bookRepository.save(new Book("3", "BookTitle_3", authorRepository.findById("2").get(),
-			Set.of("Genre_5", "Genre_6")));
+		mongoTemplate.dropCollection("books");
+		mongoTemplate.insert(new Book("1", "BookTitle_1", mongoTemplate.findById("1", Author.class),
+			Set.of(new Genre("Genre_1"), new Genre("Genre_2"))));
+		mongoTemplate.insert(new Book("2", "BookTitle_2", mongoTemplate.findById("1", Author.class),
+			Set.of(new Genre("Genre_3"), new Genre("Genre_4"))));
+		mongoTemplate.insert(new Book("3", "BookTitle_3", mongoTemplate.findById("2", Author.class),
+			Set.of(new Genre("Genre_5"), new Genre("Genre_6"))));
 	}
 
 	private static Stream<Arguments> getExpectedBooks() {
@@ -49,9 +50,7 @@ class BookRepositoryTest {
 	@ParameterizedTest
 	@MethodSource("getExpectedBooks")
 	void shouldReturnCorrectBookById(String expectedBookId) {
-		Optional<Book> optionalBook = bookRepository.findById(expectedBookId);
-		assertThat(optionalBook.isPresent()).isTrue();
-		Book expectedBook = optionalBook.get();
+		Book expectedBook = mongoTemplate.findById(expectedBookId, Book.class);
 		Optional<Book> actualBook = bookRepository.findById(expectedBookId);
 		assertThat(actualBook).isPresent().get()
 			.isEqualTo(expectedBook);
@@ -73,6 +72,16 @@ class BookRepositoryTest {
 		assertThat(actualBooks).containsExactlyElementsOf(expectedBooks);
 	}
 
+	@DisplayName("должен сохранять новую книгу")
+	@Test
+	void shouldSaveNewBook() {
+		Book book = BookGenerator.generateNew();
+		Book expectedBook = bookRepository.save(book);
+		Book actualBook = mongoTemplate.findById(expectedBook.getId(), Book.class);
+
+		assertThat(actualBook).isEqualTo(expectedBook);
+	}
+
 	@DisplayName("должен сохранять и возвращать новую книгу")
 	@Test
 	void shouldSaveAndFindNewBook() {
@@ -89,16 +98,13 @@ class BookRepositoryTest {
 	@DisplayName("должен сохранять измененную книгу")
 	@Test
 	void shouldSaveUpdatedBook() {
-		Book book = BookGenerator.generateUpdate();
+		Book expectedBook = BookGenerator.generateUpdate();
 
-		assertThat(bookRepository.findById(book.getId())).isPresent().get().isNotEqualTo(book);
+		assertThat(bookRepository.findById(expectedBook.getId())).isPresent().get().isNotEqualTo(expectedBook);
 
-		Book expectedBook = bookRepository.save(book);
-		Optional<Book> actualBook = bookRepository.findById(expectedBook.getId());
+		Book savedBook = bookRepository.save(expectedBook);
+		Book actualBook = mongoTemplate.findById(savedBook.getId(), Book.class);
 
-		assertThat(actualBook).isPresent().get()
-			.usingRecursiveComparison()
-			.ignoringExpectedNullFields()
-			.isEqualTo(expectedBook);
+		assertThat(actualBook).isEqualTo(expectedBook);
 	}
 }
