@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GenreTemplateTest {
 
 	@Autowired
-	GenreTemplate genreTemplate;
+	private GenreTemplate genreTemplate;
 
 	@DisplayName("Получить все жанры")
 	@Test
