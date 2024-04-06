@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit author</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .errors {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="error" class="message errors"></div>
+<div id="edit-author" class="message success"></div>
+
+<form id="edit-form" method="dialog" onsubmit="editAuthor()">
+    <h3>Author Info:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly" th:value="${id}"/>
+    </div>
+
+    <div class="row">
+        <label for="author-fullName-input">Full name:</label>
+        <input id="author-fullName-input" name="fullName" type="text"/>
+        <div id="field-error-fullName" class="message errors"></div>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <a th:href="@{/templates/authors}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        loadAuthor($("#id-input").val());
+    });
+
+    async function loadAuthor(id) {
+        const errorMessage = $('#error');
+        const response = await fetch("/api/v1/authors/" + id, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        const result = await response.json();
+        if (response.ok) {
+            $("#id-input").val(result.id);
+            $("#author-fullName-input").val(result.fullName);
+        } else {
+            errorMessage.text("Error: " + result.message);
+        }
+    }
+
+    async function editAuthor() {
+        const errorMessage = $('#error');
+        const editAuthor = $("#edit-author");
+        const fullNameInput = $("#author-fullName-input");
+        const idInput = $("#id-input");
+        const author = { id: idInput.val(), fullName: fullNameInput.val()}
+        const response = await fetch("/api/v1/authors/" + idInput.val(), {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(author)});
+        $(".message").text("");
+        if (response.ok) {
+            editAuthor.text("Author " + JSON.stringify(author) + " edit.");
+        } else {
+            const result = await response.json();
+            if (result.message) {
+                errorMessage.text("Error: " + result.message);
+            }
+            if (result.fields) {
+                result.fields.forEach(function (field) {
+                    $("#field-error-" + field.fieldName).text("Full name error: " + field.error);
+                })
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
