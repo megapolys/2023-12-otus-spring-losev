@@ -100,7 +100,7 @@ class BookRepositoryTest {
 	void shouldSaveUpdatedBook() {
 		Book expectedBook = BookGenerator.generateUpdate();
 
-		assertThat(bookRepository.findById(expectedBook.getId())).isPresent().get().isNotEqualTo(expectedBook);
+		assertThat(mongoTemplate.findById(expectedBook.getId(), Book.class)).isNotEqualTo(expectedBook);
 
 		Book savedBook = bookRepository.save(expectedBook);
 		Book actualBook = mongoTemplate.findById(savedBook.getId(), Book.class);
