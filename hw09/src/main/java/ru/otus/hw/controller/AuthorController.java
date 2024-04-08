@@ -1,16 +1,14 @@
 package ru.otus.hw.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.otus.hw.models.dto.AuthorDto;
+import ru.otus.hw.models.dto.AuthorFormDto;
 import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
@@ -28,8 +26,8 @@ public class AuthorController {
 		return "authors/list";
 	}
 
-	@GetMapping(value = "/authors/edit", params = "id")
-	public String getAuthorEdit(@RequestParam("id") long id, Model model) {
+	@GetMapping(value = "/authors/edit/{id}")
+	public String getAuthorEdit(@PathVariable("id") long id, Model model) {
 		AuthorDto authorDto = authorService.findById(id);
 		model.addAttribute("author", authorDto);
 		return "authors/edit";
@@ -37,58 +35,48 @@ public class AuthorController {
 
 	@PostMapping(value = "/authors/edit")
 	public String editAuthor(
-		@Valid @ModelAttribute("author") AuthorDto authorDto,
-		BindingResult bindingResult,
+		AuthorFormDto author,
 		Model model
 	) {
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("author", authorDto);
-			return "authors/edit";
-		}
 		try {
-			authorService.save(authorDto);
+			authorService.save(author);
 		} catch (Exception e) {
 			model.addAttribute("errorMessage", e.getMessage());
-			model.addAttribute("author", authorDto);
+			model.addAttribute("author", author);
 			return "authors/edit";
 		}
 		return "redirect:/authors";
 	}
 
-	@PostMapping(value = "/authors/delete", params = "id")
+	@GetMapping("/authors/add")
+	public String getAuthorAdd() {
+		return "authors/add";
+	}
+
+	@PostMapping("/authors/add")
+	public String addAuthor(
+		AuthorFormDto author,
+		Model model
+	) {
+		try {
+			authorService.save(author);
+		} catch (Exception e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			model.addAttribute("author", author);
+			return "authors/add";
+		}
+		return "redirect:/authors";
+	}
+
+	@PostMapping(value = "/authors/delete/{id}")
 	public String deleteAuthor(
-		@RequestParam("id") long id,
+		@PathVariable("id") long id,
 		RedirectAttributes redirectAttributes
 	) {
 		try {
 			authorService.deleteById(id);
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-		}
-		return "redirect:/authors";
-	}
-
-	@GetMapping("/authors/add")
-	public String getAuthorAdd(Model model) {
-		return "authors/add";
-	}
-
-	@PostMapping("/authors/add")
-	public String addAuthor(
-		@Valid @ModelAttribute("author") AuthorDto authorDto,
-		BindingResult bindingResult,
-		Model model
-	) {
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("author", authorDto);
-			return "authors/add";
-		}
-		try {
-			authorService.save(authorDto);
-		} catch (Exception e) {
-			model.addAttribute("errorMessage", e.getMessage());
-			model.addAttribute("author", authorDto);
-			return "authors/add";
 		}
 		return "redirect:/authors";
 	}

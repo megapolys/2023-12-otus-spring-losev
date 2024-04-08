@@ -16,4 +16,8 @@ public class AuthorGenerator {
 	public static Author generate() {
 		return new Author(1, "name_1");
 	}
+
+	public static Author generateNewAuthor() {
+		return new Author(0, "name_1");
+	}
 }

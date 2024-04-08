@@ -36,7 +36,6 @@
     <div th:if="${author} != null" class="row">
         <label for="author-name-input">Full name:</label>
         <input id="author-name-input" name="fullName" type="text" value="John Doe" th:value="*{fullName}"/>
-        <div class="errors" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Wrong author full name error</div>
     </div>
 
     <div th:if="${author} == null" class="row">

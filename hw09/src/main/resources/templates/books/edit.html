@@ -30,7 +30,7 @@
 
 <div class="errors" th:if="${errorMessage}" th:text="${errorMessage}">Error</div>
 
-<form id="edit-form" action="edit.html" th:method="post" th:action="@{/books/edit(id=${book.id})}" th:object="${book}">
+<form id="edit-form" action="edit.html" th:method="post" th:action="@{/books/edit/{id}(id=${book.id})}" th:object="${book}">
     <h3>Book Info:</h3>
 
     <div class="row">
@@ -46,7 +46,7 @@
     <div class="row">
         <label for="author_input">Author:</label>
         <select id="author_input" name="authorId">
-            <option th:each="author : ${authors}" th:text="${author.getFullName()}" th:value="${author.id}" th:checked="${author.getId()} == *{author.id}">Author</option>
+            <option th:each="author : ${authors}" th:text="${author.getFullName()}" th:value="${author.id}" th:selected="${author.getId()} == *{author.id}">Author</option>
         </select>
     </div>
 

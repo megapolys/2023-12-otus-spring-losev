@@ -30,7 +30,7 @@
 
 <div class="errors" th:if="${errorMessage}" th:text="${errorMessage}">Error</div>
 
-<form id="edit-form" action="edit.html" th:method="post" th:action="@{/authors/edit(id=${author.id})}" th:object="${author}">
+<form id="edit-form" action="edit.html" th:method="post" th:action="@{/authors/edit/{id}(id=${author.id})}" th:object="${author}">
     <h3>Author Info:</h3>
 
     <div class="row">
@@ -41,7 +41,6 @@
     <div class="row">
         <label for="author-name-input">Full name:</label>
         <input id="author-name-input" name="fullName" type="text" value="John Doe" th:value="*{fullName}"/>
-        <div class="errors" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Wrong author full name error</div>
     </div>
 
     <div class="row">

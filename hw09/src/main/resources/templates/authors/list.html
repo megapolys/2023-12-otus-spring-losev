@@ -48,8 +48,8 @@
         <td th:text="${author.id}">1</td>
         <td th:text="${author.fullName}">John Doe</td>
         <td>
-            <a th:href="@{/authors/edit(id=${author.id})}">Edit</a>
-            <form action="#" method="post" th:action="@{/authors/delete(id=${author.id})}" th:object="${author}">
+            <a th:href="@{/authors/edit/{id}(id=${author.id})}">Edit</a>
+            <form action="#" method="post" th:action="@{/authors/delete/{id}(id=${author.id})}" th:object="${author}">
                 <button type="submit">Delete</button>
             </form>
         </td>

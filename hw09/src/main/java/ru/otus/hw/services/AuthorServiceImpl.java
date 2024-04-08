@@ -1,6 +1,7 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import ru.otus.hw.exceptions.DeleteEntityException;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.exceptions.author.FullNameDuplicateException;
 import ru.otus.hw.models.dto.AuthorDto;
+import ru.otus.hw.models.dto.AuthorFormDto;
 import ru.otus.hw.models.entity.Author;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
@@ -36,12 +38,15 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	@Transactional
-	public void save(AuthorDto authorDto) {
-		if (authorRepository.existsByFullNameAndIdNot(authorDto.getFullName(), authorDto.getId())) {
-			throw new FullNameDuplicateException("Author with same fullName %s already exists"
-				.formatted(authorDto.getFullName()));
+	public void save(AuthorFormDto author) {
+		if (StringUtils.isBlank(author.getFullName())) {
+			throw new IllegalArgumentException("FullName must be not empty");
 		}
-		authorRepository.save(Objects.requireNonNull(conversionService.convert(authorDto, Author.class)));
+		if (authorRepository.existsByFullNameAndIdNot(author.getFullName(), author.getId())) {
+			throw new FullNameDuplicateException("Author with same fullName %s already exists"
+				.formatted(author.getFullName()));
+		}
+		authorRepository.save(Objects.requireNonNull(conversionService.convert(author, Author.class)));
 
 	}
 

@@ -9,10 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
-//@WebMvcTest
+@WebMvcTest
 public abstract class AbstractControllerTest {
 
 	@Autowired

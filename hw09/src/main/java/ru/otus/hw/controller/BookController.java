@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,8 +33,8 @@ public class BookController {
 		return "books/list";
 	}
 
-	@GetMapping(value = "/books/edit", params = "id")
-	public String getBookEdit(@RequestParam("id") long id, Model model) {
+	@GetMapping(value = "/books/edit/{id}")
+	public String getBookEdit(@PathVariable("id") long id, Model model) {
 		BookDto bookDto = bookService.findById(id);
 		model.addAttribute("book", bookDto);
 		model.addAttribute("authors", authorService.findAll());
@@ -41,32 +42,18 @@ public class BookController {
 		return "books/edit";
 	}
 
-	@PostMapping(value = "/books/edit", params = "id")
+	@PostMapping(value = "/books/edit/{id}")
 	public String editBook(
-		@RequestParam("id") long id,
+		@PathVariable("id") long id,
 		BookFormDto book,
-		RedirectAttributes redirectAttributes,
-		Model model
+		RedirectAttributes redirectAttributes
 	) {
 		try {
 			bookService.save(book);
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 			redirectAttributes.addAttribute("id", id);
-			return "redirect:/books/edit?id={id}";
-		}
-		return "redirect:/books";
-	}
-
-	@PostMapping(value = "/books/delete", params = "id")
-	public String deleteBook(
-		@RequestParam("id") long id,
-		RedirectAttributes redirectAttributes
-	) {
-		try {
-			bookService.deleteById(id);
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+			return "redirect:/books/edit/{id}";
 		}
 		return "redirect:/books";
 	}
@@ -81,14 +68,26 @@ public class BookController {
 	@PostMapping(value = "/books/add")
 	public String addBook(
 		BookFormDto book,
-		RedirectAttributes redirectAttributes,
-		Model model
+		RedirectAttributes redirectAttributes
 	) {
 		try {
 			bookService.save(book);
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 			return "redirect:/books/add";
+		}
+		return "redirect:/books";
+	}
+
+	@PostMapping(value = "/books/delete/{id}")
+	public String deleteBook(
+		@PathVariable("id") long id,
+		RedirectAttributes redirectAttributes
+	) {
+		try {
+			bookService.deleteById(id);
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 		}
 		return "redirect:/books";
 	}

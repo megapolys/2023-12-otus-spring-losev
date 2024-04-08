@@ -50,8 +50,8 @@
             <span th:each="genre, iStat : ${book.genres}" th:text="${genre.name} + (${iStat.last} ? '' : ', ')" />
         </td>
         <td>
-            <a th:href="@{/books/edit(id=${book.id})}">Edit</a>
-            <form action="#" method="post" th:action="@{/books/delete(id=${book.id})}" th:object="${book}">
+            <a th:href="@{/books/edit/{id}(id=${book.id})}">Edit</a>
+            <form action="#" method="post" th:action="@{/books/delete/{id}(id=${book.id})}" th:object="${book}">
                 <button type="submit">Delete</button>
             </form>
         </td>

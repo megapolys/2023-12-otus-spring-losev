@@ -16,8 +16,4 @@ public class AuthorDtoGenerator {
 	public static AuthorDto generate() {
 		return new AuthorDto(1, "name_1");
 	}
-
-	public static AuthorDto generateWithEmptyFullName() {
-		return new AuthorDto(1, "");
-	}
 }
