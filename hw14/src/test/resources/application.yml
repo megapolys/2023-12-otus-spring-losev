@@ -1,0 +1,36 @@
+spring:
+  main:
+    allow-circular-references: true
+
+  batch:
+    job:
+      enabled: false
+
+  shell:
+    interactive:
+      enabled: false
+    noninteractive:
+      enabled: true
+
+    command:
+      version:
+        enabled: false
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: otus_test
+
+  datasource:
+    url: jdbc:h2:mem:maindb
+    initialization-mode: never
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
