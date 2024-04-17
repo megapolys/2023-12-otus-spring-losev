@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WithMockUser(roles = {"USER", "BOOK_MANAGER"})
+@WithMockUser
 @ContextConfiguration(classes = BookController.class)
 class BookControllerTest extends AbstractControllerTest {
 

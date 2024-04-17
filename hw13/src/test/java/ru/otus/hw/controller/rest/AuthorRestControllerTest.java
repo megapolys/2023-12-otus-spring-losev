@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 	RestControllerErrorHandler.class,
 	MethodArgumentNotValidExceptionToValidationErrorDtoConverter.class
 })
-@WithMockUser(roles = {"USER", "AUTHOR_MANAGER"})
-public class AuthorRestControllerTest extends AbstractControllerTest {
+@WithMockUser
+public class AuthorRestControllerTest extends AbstractRestControllerTest {
 
 	@MockBean
 	private AuthorService authorService;

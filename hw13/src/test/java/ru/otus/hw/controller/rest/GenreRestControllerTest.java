@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ContextConfiguration(classes = GenreRestController.class)
 @WithMockUser
-public class GenreRestControllerTest extends AbstractControllerTest {
+public class GenreRestControllerTest extends AbstractRestControllerTest {
 
 	@MockBean
 	private GenreService genreService;

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 	MethodArgumentNotValidExceptionToValidationErrorDtoConverter.class
 })
 @WithMockUser(roles = {"USER", "BOOK_MANAGER"})
-public class BookRestControllerTest extends AbstractControllerTest {
+public class BookRestControllerTest extends AbstractRestControllerTest {
 
 	@MockBean
 	private BookService bookService;

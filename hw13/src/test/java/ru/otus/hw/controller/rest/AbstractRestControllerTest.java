@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.config.SpringSecurityConfig;
 
 @WebMvcTest
-@Import(SpringSecurityConfig.class)
 public abstract class AbstractRestControllerTest {
 
 	@Autowired

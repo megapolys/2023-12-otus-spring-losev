@@ -22,21 +22,21 @@ public class UserDto implements UserDetails {
 
 	private boolean locked;
 
-	private Set<RoleDto> roles;
+	private Set<AuthorityDto> authorities;
 
 	public UserDto(User user) {
 		this.id = user.getId();
 		this.userName = user.getUserName();
 		this.password = user.getPassword();
 		this.locked = user.isLocked();
-		this.roles = user.getRoles().stream()
-			.map(RoleDto::new)
+		this.authorities = user.getRoles().stream()
+			.map(AuthorityDto::new)
 			.collect(Collectors.toSet());
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles;
+		return authorities;
 	}
 
 	@Override

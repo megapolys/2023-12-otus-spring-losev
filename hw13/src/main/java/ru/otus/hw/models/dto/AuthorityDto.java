@@ -7,13 +7,13 @@ import ru.otus.hw.models.entity.Role;
 
 @Data
 @AllArgsConstructor
-public class RoleDto implements GrantedAuthority {
+public class AuthorityDto implements GrantedAuthority {
 
 	private long id;
 
 	private String roleName;
 
-	public RoleDto(Role role) {
+	public AuthorityDto(Role role) {
 		this.id = role.getId();
 		this.roleName = role.getName();
 	}
