@@ -11,9 +11,4 @@ public class InitMongoDbDropChangeLog {
 	public void dropDB(MongoDatabase database) {
 		database.drop();
 	}
-
-	@ChangeSet(order = "001", id = "createIdStorageDB", author = "d.losev", runAlways = true)
-	public void createIdStorageDB(MongoDatabase database) {
-		database.createCollection("id_transform");
-	}
 }

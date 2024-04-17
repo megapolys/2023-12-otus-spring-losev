@@ -58,7 +58,6 @@ public class JobConfig {
 
 	private final PlatformTransactionManager platformTransactionManager;
 
-	@StepScope
 	@Bean
 	public RepositoryItemReader<Author> authorRepositoryItemReader() {
 		return new RepositoryItemReaderBuilder<Author>()
@@ -70,7 +69,6 @@ public class JobConfig {
 			.build();
 	}
 
-	@StepScope
 	@Bean
 	public RepositoryItemReader<Genre> genreRepositoryItemReader() {
 		return new RepositoryItemReaderBuilder<Genre>()
@@ -82,7 +80,6 @@ public class JobConfig {
 			.build();
 	}
 
-	@StepScope
 	@Bean
 	public RepositoryItemReader<Book> bookRepositoryItemReader() {
 		return new RepositoryItemReaderBuilder<Book>()
@@ -94,7 +91,6 @@ public class JobConfig {
 			.build();
 	}
 
-	@StepScope
 	@Bean
 	public RepositoryItemReader<Comment> commentRepositoryItemReader() {
 		return new RepositoryItemReaderBuilder<Comment>()
@@ -110,7 +106,6 @@ public class JobConfig {
 		return Map.of("id", Sort.Direction.ASC);
 	}
 
-	@StepScope
 	@Bean
 	public MongoItemWriter<MongoAuthor> authorWriter() {
 		MongoItemWriter<MongoAuthor> writer = new MongoItemWriter<>();
@@ -119,7 +114,6 @@ public class JobConfig {
 		return writer;
 	}
 
-	@StepScope
 	@Bean
 	public MongoItemWriter<MongoGenre> genreWriter() {
 		MongoItemWriter<MongoGenre> writer = new MongoItemWriter<>();
@@ -128,7 +122,6 @@ public class JobConfig {
 		return writer;
 	}
 
-	@StepScope
 	@Bean
 	public MongoItemWriter<MongoBook> bookWriter() {
 		MongoItemWriter<MongoBook> writer = new MongoItemWriter<>();
@@ -137,7 +130,6 @@ public class JobConfig {
 		return writer;
 	}
 
-	@StepScope
 	@Bean
 	public MongoItemWriter<MongoComment> commentWriter() {
 		MongoItemWriter<MongoComment> writer = new MongoItemWriter<>();
