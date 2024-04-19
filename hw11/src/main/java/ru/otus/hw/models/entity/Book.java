@@ -6,8 +6,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
-import java.util.Set;
+import reactor.core.publisher.Flux;
 
 @Document("books")
 @AllArgsConstructor
@@ -24,5 +23,11 @@ public class Book {
 	private Author author;
 
 	@DocumentReference
-	private Set<Genre> genres;
+	private Flux<Genre> genres;
+
+	public Book(String title, Author author, Flux<Genre> genres) {
+		this.title = title;
+		this.author = author;
+		this.genres = genres;
+	}
 }
