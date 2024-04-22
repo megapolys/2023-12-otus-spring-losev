@@ -1,0 +1,11 @@
+DELETE http://{{host}}/api/v1/authors?id=1
+Accept: application/json
+
+###
+POST http://{{host}}/api/v1/authors
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fullName": ""
+}
