@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .errors {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="error" class="message errors"></div>
+<div id="saved-book" class="message success"></div>
+
+<form id="add-form" method="dialog" onsubmit="addBook()">
+    <h3>Book Info:</h3>
+
+    <div class="row">
+        <label for="book-title-input">Title:</label>
+        <input id="book-title-input" name="title" type="text"/>
+        <div id="field-error-title" class="message errors"></div>
+    </div>
+
+    <div class="row">
+        <label for="author-input">Author:</label>
+        <select id="author-input" name="authorId">
+        </select>
+    </div>
+
+    <div class="row">
+        <fieldset id="genres">
+            <legend>Choose genres:</legend>
+            <div id="field-error-genreIds" class="message errors"></div>
+        </fieldset>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <a th:href="@{/templates/books}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        loadAuthors();
+        loadGenres();
+    });
+
+    async function loadAuthors() {
+        $.get('/api/v1/authors').done(function (authors) {
+            authors.forEach(function (author) {
+                $('#author-input').append(`
+            <option value="${author.id}">${author.fullName}</option>
+                `)
+            });
+        })
+    }
+
+    async function loadGenres() {
+        $.get('/api/v1/genres').done(function (genres) {
+            genres.forEach(function (genre) {
+                $('#genres').append(`
+            <div>
+                <input type="checkbox" id="genre_${genre.id}" name="genreIds" value="${genre.id}"/>
+                <label for="genre_${genre.id}">${genre.name}</label>
+            </div>
+                `)
+            });
+        })
+    }
+
+    async function addBook() {
+        const errorMessage = $('#error');
+        const savedBook = $("#saved-book");
+        const book = { title: $("#book-title-input").val(),
+            authorId: $("#author-input").val(),
+            genreIds: getCheckedGenres()}
+        const response = await fetch("/api/v1/books", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(book)});
+        $(".message").text("");
+        if (response.ok) {
+            $('#book-title-input').val("");
+            savedBook.text("Book " + JSON.stringify(book) + " saved.");
+        } else {
+            const result = await response.json();
+            if (result.message) {
+                errorMessage.text("Error: " + result.message);
+            }
+            if (result.fields) {
+                result.fields.forEach(function (field) {
+                    $("#field-error-" + field.fieldName).text("Error: " + field.error);
+                })
+            }
+        }
+    }
+
+    function getCheckedGenres() {
+        const genres = [];
+        $("#genres").find("[name='genreIds']").each(function () {
+            if ($(this).is(":checked")) {
+                genres.push($(this).attr("value"));
+            }
+        });
+        return genres;
+    }
+</script>
+</body>
+</html>
