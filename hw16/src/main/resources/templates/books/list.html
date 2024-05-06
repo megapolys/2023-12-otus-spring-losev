@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .authors tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .authors td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+<h3>Books:</h3>
+
+<a th:href="@{/books/add}">Add new book</a>
+
+<div id="error" class="errors"></div>
+
+<table class="authors">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genres</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        $.get('/api/v1/books').done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr id="book_tr_${book.id}">
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author.fullName}</td>
+                        <td>${book.genres.map(genre => genre.name).join(', ')}</td>
+                        <td>
+                            <a href="/books/edit/${book.id}">Edit</a>
+                            <a href="#" onclick="deleteBook(${book.id})">Delete</a>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+
+    async function deleteBook(id) {
+        const errorMessage = document.getElementById("error")
+        const response = await fetch("/api/v1/books/" + id, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            $('#book_tr_' + id).remove();
+            errorMessage.innerHTML = "";
+        } else {
+            const result = await response.json();
+            errorMessage.innerHTML = "Error: " + result.message;
+        }
+    }
+</script>
+</body>
+</html>
