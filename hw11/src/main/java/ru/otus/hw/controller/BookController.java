@@ -16,7 +16,7 @@ public class BookController {
 	}
 
 	@GetMapping("/books/edit/{id}")
-	public String getBookEdit(@PathVariable long id, Model model) {
+	public String getBookEdit(@PathVariable String id, Model model) {
 		model.addAttribute("id", id);
 		return "books/edit";
 	}

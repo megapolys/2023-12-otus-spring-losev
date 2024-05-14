@@ -3,7 +3,13 @@ package ru.otus.hw.controller.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -16,7 +22,7 @@ import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,14 +68,14 @@ public class BookRestController {
 	}
 
 	private Mono<BookDto> save(BookFormDto bookFormDto) {
-		return getAuthor(bookFormDto)
-			.flatMap(author -> bookRepository.save(
+		return Mono.zip(getAuthor(bookFormDto), getGenres(bookFormDto))
+			.flatMap(tuple2 -> bookRepository.save(
 				new Book(
 					bookFormDto.getId(),
 					bookFormDto.getTitle(),
-					author,
-					getGenres(bookFormDto)
-				)).map(BookDto::new));
+					tuple2.getT1(),
+					tuple2.getT2())
+			)).map(BookDto::new);
 	}
 
 	private Mono<Author> getAuthor(BookFormDto bookFormDto) {
@@ -84,7 +90,7 @@ public class BookRestController {
 			});
 	}
 
-	private Flux<Genre> getGenres(BookFormDto bookFormDto) {
+	private Mono<List<Genre>> getGenres(BookFormDto bookFormDto) {
 		return Flux.fromStream(bookFormDto.getGenreIds().stream())
 			.map(genreRepository::findById)
 			.flatMap(genre -> {
@@ -95,6 +101,6 @@ public class BookRestController {
 				} else {
 					return genre;
 				}
-			});
+			}).collectList();
 	}
 }

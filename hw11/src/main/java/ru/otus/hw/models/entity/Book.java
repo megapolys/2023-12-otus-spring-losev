@@ -1,15 +1,15 @@
 package ru.otus.hw.models.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Document("books")
-@AllArgsConstructor
 @Data
 @Builder
 public class Book {
@@ -23,9 +23,17 @@ public class Book {
 	private Author author;
 
 	@DocumentReference
-	private Flux<Genre> genres;
+	private List<Genre> genres;
 
-	public Book(String title, Author author, Flux<Genre> genres) {
+	public Book(String title, Author author, List<Genre> genres) {
+		this.title = title;
+		this.author = author;
+		this.genres = genres;
+	}
+
+	@PersistenceCreator
+	public Book(String id, String title, Author author, List<Genre> genres) {
+		this.id = id;
 		this.title = title;
 		this.author = author;
 		this.genres = genres;
