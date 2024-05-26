@@ -79,28 +79,13 @@ public class BookRestController {
 	}
 
 	private Mono<Author> getAuthor(BookFormDto bookFormDto) {
-		return authorRepository.findById(bookFormDto.getAuthorId())
-			.map(author -> {
-				if (author == null) {
-					throw new EntityNotFoundException("Author with id %s not found"
-						.formatted(bookFormDto.getAuthorId()));
-				} else {
-					return author;
-				}
-			});
+		return Mono.just(bookFormDto)
+			.flatMap(book -> authorRepository.findById(book.getAuthorId()))
+			.switchIfEmpty(Mono.error(new EntityNotFoundException("Author with id %s not found"
+				.formatted(bookFormDto.getAuthorId()))));
 	}
 
 	private Mono<List<Genre>> getGenres(BookFormDto bookFormDto) {
-		return Flux.fromStream(bookFormDto.getGenreIds().stream())
-			.map(genreRepository::findById)
-			.flatMap(genre -> {
-				if (genre == null) {
-					return Flux.error(new EntityNotFoundException(
-						"One or all genres with ids %s not found"
-							.formatted(bookFormDto.getGenreIds())));
-				} else {
-					return genre;
-				}
-			}).collectList();
+		return genreRepository.findAllByIds(bookFormDto.getGenreIds()).collectList();
 	}
 }

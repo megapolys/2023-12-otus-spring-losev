@@ -4,13 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.exceptions.DeleteEntityException;
@@ -45,7 +39,7 @@ public class AuthorRestController {
 		return authorRepository.findById(id)
 			.map(AuthorDto::new)
 			.map(ResponseEntity::ok)
-			.switchIfEmpty(Mono.fromCallable(() -> ResponseEntity.notFound().build()));
+			.switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
 	}
 
 	@PostMapping(value = "api/v1/authors")
@@ -63,39 +57,25 @@ public class AuthorRestController {
 	}
 
 	@DeleteMapping(value = "api/v1/authors/{id}")
-	public Mono<Void> deleteAuthor(@PathVariable("id") String id) {
-		return authorRepository.findById(id)
-			.flatMap(author -> {
-				if (author == null) {
-					return Mono.error(new EntityNotFoundException("Author with id %s not found."
-						.formatted(id)));
-				} else {
-					return deleteAuthor(id, author);
-				}
-			});
+	public Mono<Void> deleteAuthor(@PathVariable("id") String authorId) {
+		return Mono.just(authorId)
+			.filterWhen(authorRepository::existsById)
+			.switchIfEmpty(Mono.error(new EntityNotFoundException("Author with id %s not found."
+				.formatted(authorId))))
+			.filterWhen(id -> bookRepository.existsBookByAuthorId(id)
+				.map(exist -> !exist))
+			.switchIfEmpty(Mono.error(DeleteEntityException.authorByBooksDependency(authorId)))
+			.flatMap(authorRepository::deleteById);
 	}
 
-	private Mono<AuthorDto> save(AuthorFormDto author) {
-		return authorRepository.existsByFullNameAndIdNot(author.getFullName(), author.getId())
-			.flatMap(existAuthor -> {
-				if (existAuthor) {
-					return Mono.error(FullNameDuplicateException.byFullName(author.getFullName()));
-				} else {
-					return authorRepository.save(Objects.requireNonNull(
-						conversionService.convert(author, Author.class)));
-				}
-			})
+	private Mono<AuthorDto> save(AuthorFormDto authorFormDto) {
+		return Mono.just(authorFormDto)
+			.filterWhen(author ->
+				authorRepository.existsByFullNameAndIdNot(author.getFullName(), author.getId())
+					.map(exist -> !exist))
+			.switchIfEmpty(Mono.error(FullNameDuplicateException.byFullName(authorFormDto.getFullName())))
+			.flatMap(author -> authorRepository.save(
+				Objects.requireNonNull(conversionService.convert(author, Author.class))))
 			.map(AuthorDto::new);
-	}
-
-	private Mono<Void> deleteAuthor(String id, Author author) {
-		return bookRepository.existsBookByAuthor(author)
-			.flatMap(bookExist -> {
-				if (bookExist) {
-					return Mono.error(DeleteEntityException
-						.authorByBooksDependency(id));
-				}
-				return authorRepository.deleteById(id);
-			});
 	}
 }
