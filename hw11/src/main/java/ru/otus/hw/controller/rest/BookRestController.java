@@ -86,6 +86,6 @@ public class BookRestController {
 	}
 
 	private Mono<List<Genre>> getGenres(BookFormDto bookFormDto) {
-		return genreRepository.findAllByIds(bookFormDto.getGenreIds()).collectList();
+		return genreRepository.findAllById(bookFormDto.getGenreIds()).collectList();
 	}
 }
